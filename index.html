@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Train Time Homework</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.4/firebase-database.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="jumbotron">
+            <h1 class="text-center"> Anytime is Train Time</h1>
+            <h3 class="text-center">Choo Choo. Chee Chee.</h3>
+        </div>
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"> Current Train Schedule </h3>
+            </div>
+            <div class="panel-body">
+                <table class="table" id="trains">
+                    <thead>
+                        <tr>
+                            <th id="train-input"> Train Name </th>
+                            <th id="destination-input"> Destination </th>
+                            <th id="frequency-input"> Frequency (min) </th>
+                            <th id="next-input"> Next Arrival </th>
+                            <th id="minutes-input"> Minutes Away </th>
+                        </tr>
+                        <tr>
+                            <td>Trenton Express</td>
+                            <td>Trenton</td>
+                            <td>25</td>
+                            <td>5:35PM</td>
+                            <td>10</td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"> Add Train </h3>
+            </div>
+            <div class="panel-body">
+
+                <form>
+                    <div class="form-group">
+                        <label for="train-name">Train Name</label>
+                        <input type="text" class="form-control" id="train-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="destination">Destination</label>
+                        <input type="text" class="form-control" id="train">
+                    </div>
+                    <div class="form-group">
+                        <label for="first">First Train Time</label>
+                        <input type="text" class="form-control" id="first">
+                    </div>
+                    <div class="form-group">
+                        <label for="frequency">Frequency (min)</label>
+                        <input type="number" class="form-control" id="frequency">
+                    </div>
+                    <button type="submit" id="add-train" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script>
+
+
+        var firebaseConfig = {
+            apiKey: "AIzaSyAaLGRs3uvSkoIpMniJBwsrFYycVJHMOBY",
+            authDomain: "project-id.firebaseapp.com",
+            databaseURL: "https://project-id.firebaseio.com",
+            projectId: "project-id",
+            storageBucket: "project-id.appspot.com",
+            messagingSenderId: "sender-id",
+            appID: "app-id",
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        var database = firebase.database();
+
+
+
+        $("#add-train").on("click", function (event) {
+            event.preventDefault();
+
+            var user = {
+                name: $("#train-name").val().trim(),
+                destination: $("#destination").val().trim(),
+                first: $("#first").val().trim(),
+                frequency: $("#frequency").val().trim(),
+            }
+            database.ref().push(user);
+
+        });
+
+        database.ref().on("child_added", function (snapshot) {
+
+            var tableRow = $("<tr>");
+            var trainName = $("<td>" + snapshot.val().name + "</td>");
+            var destination = $("<td>" + snapshot.val().role + "</td>");
+            var first = $("<td>" + snapshot.val().start + "</td>");
+            var frequency = $("<td>" + snapshot.val().rate + "</td>");
+
+            console.log(snapshot.val());
+            tableRow.append(trainName, destination, first, frequency);
+            $(".table").append(tableRow);
+        }, function (errorObject) {
+            console.log("The read failed: " + errorObject.code);
+
+        });
+
+
+    </script>
+
+</body>
+
+</html>
